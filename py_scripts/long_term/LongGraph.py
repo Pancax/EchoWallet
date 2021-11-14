@@ -6,4 +6,5 @@ class LongGraph:
 
     def addLongPoint(self, point):
         self.graphList.append(point)
-        self.graphList.sort(key=lambda x: x.time)
+
+    def makeGraph

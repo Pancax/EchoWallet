@@ -9,18 +9,18 @@ from long_term.LongGraph import LongGraph
 from long_term.LongPoint import LongPoint
 from stock_scrape import doesStockExist
 
+tickMap = dict()
 
 
-def interpretData(subreddit, tickMap, symbolsF):
-
+def interpretData(subreddit, symbolsF):
     for post in subreddit.top("month", limit=5):
 
         potential_tickers = set()
 
-        symbolSet= set()
+        symbolSet = set()
         for symbol in symbolsF:
-            symbol = symbol.replace("\n","")
-            symbol2 = "$"+symbol
+            symbol = symbol.replace("\n", "")
+            symbol2 = "$" + symbol
             symbolSet.add(symbol)
             symbolSet.add(symbol2)
 
@@ -30,40 +30,17 @@ def interpretData(subreddit, tickMap, symbolsF):
         wordsText.update(re.findall(r'\$*\w+', post.selftext));
 
         for word in wordsTitle:
-            if word in symbolSet and ("$" in word or not len(word)<=3):
-                if("$" in word):
+            if word in symbolSet and ("$" in word or not len(word) <= 3):
+                if ("$" in word):
                     potential_tickers.add(word)
                 else:
-                    potential_tickers.add("$"+word)
+                    potential_tickers.add("$" + word)
         for word in wordsText:
-            if word in symbolSet and ("$" in word or not len(word)<=3):
-                if("$" in word):
+            if word in symbolSet and ("$" in word or not len(word) <= 3):
+                if ("$" in word):
                     potential_tickers.add(word)
                 else:
-                    potential_tickers.add("$"+word)
-
-            #thing = re.search("\\s+" + re.escape(symbol) + "[\\s+\\.]",post.title)
-            #thing2 = re.search("\\s+"+re.escape(symbol2)+"[\\s+\\.]",post.title)
-            #thing3 = re.search("\\s+"+re.escape(symbol)+"[\\s+\\.]",post.selftext)
-            #thing4 = re.search("\\s+"+re.escape(symbol2)+"[\\s+\\.]",post.selftext)
-            #if thing and len(symbol)>3 or thing2 or thing3 and len(symbol)>3 or thing4:
-            #    potential_tickers.add(symbol2)
-
-
-
-        #finds = re.findall(r'[$][A-Za-z]+', post.title)
-        #finds2 = re.findall(r'[$][A-Za-z]+', post.selftext)
-        # For each ticker in a post we need a point, for every comment under this post each of those tickers gets .5 a count
-        # if that comment contains the ticker, they get 1 + the .5 as well
-        # if a ticker is in the title it gets 5 points
-        #
-        #
-        #if finds.count != 0:
-        #    potential_tickers.update(finds)
-        #    print(finds)
-        #if finds2.count != 0:
-        #    potential_tickers.update(finds2)
-        #    print(finds2)
+                    potential_tickers.add("$" + word)
 
         print(post.title)
         print(post.selftext)
@@ -71,23 +48,23 @@ def interpretData(subreddit, tickMap, symbolsF):
 
         for tickName in potential_tickers:
             tickName = tickName.upper()
-            if doesStockExist(tickName):
-                if tickName not in tickMap:
-                    tickMap[tickName] = LongGraph(tickName)
-                tickMap[tickName].addLongPoint(LongPoint(post.created_utc))
-                tickMap[tickName].graphList[len(tickMap[tickName].graphList) - 1].addCount(100)
+            if tickName not in tickMap:
+                tickMap[tickName] = LongGraph(tickName)
+            tickMap[tickName].addLongPoint(LongPoint(post.created_utc))
+            tickMap[tickName].graphList[len(tickMap[tickName].graphList) - 1].addCount(100)
+            print("count after title: "+str(tickName) + ""+str(tickMap[tickName].graphList[len(tickMap[tickName].graphList) - 1].count))
         title_tickers = set()
         title_tickers.update(potential_tickers)
 
-        #print("Ticks for post: " + str(title_tickers))
+        # print("Ticks for post: " + str(title_tickers))
         # Do comments
         post.comment_sort = "top"
         top_level_comments = list(post.comments)
         # count # of comments
         for title_ticker in title_tickers:
             title_ticker = title_ticker.upper()
-            if doesStockExist(title_ticker):
-                tickMap[title_ticker].graphList[len(tickMap[title_ticker].graphList) - 1].addCount(len(top_level_comments))
+            tickMap[title_ticker].graphList[len(tickMap[title_ticker].graphList) - 1].addCount(len(top_level_comments))
+            print("count after # of coments: "+str(title_ticker) + ""+str(tickMap[title_ticker].graphList[len(tickMap[title_ticker].graphList) - 1].count))
 
         for comment in top_level_comments:
             potential_tickers = set()
@@ -95,25 +72,24 @@ def interpretData(subreddit, tickMap, symbolsF):
                 wordsBody = set()
                 wordsBody.update(re.findall(r'\$*\w+', comment.body));
                 for word in wordsBody:
-                    if word in symbolSet and ("$" in word or not len(word)<=3):
-                        if("$" in word):
+                    if word in symbolSet and ("$" in word or not len(word) == 1):
+                        if ("$" in word):
                             potential_tickers.add(word)
                         else:
-                            potential_tickers.add("$"+word)
+                            potential_tickers.add("$" + word)
 
                 # add them to the relevant place
                 if hasattr(comment, "created_utc"):
                     for tickName in potential_tickers:
                         tickName = tickName.upper()
-                        if doesStockExist(tickName):
-                            if tickName not in tickMap:
-                                tickMap[tickName] = LongGraph(tickName)
-                            tickMap[tickName].addLongPoint(LongPoint(comment.created_utc))
-                            print("Tick in comment, adding 10: " +tickName)
-                            tickMap[tickName].graphList[len(tickMap[tickName].graphList) - 1].addCount(10)
+                        if tickName not in tickMap:
+                            tickMap[tickName] = LongGraph(tickName)
+                        tickMap[tickName].addLongPoint(LongPoint(comment.created_utc))
+                        print("Tick in comment, adding 10: " + tickName)
+                        tickMap[tickName].graphList[len(tickMap[tickName].graphList) - 1].addCount(10)
+                        print("count after comment: "+str(tickName) + ""+str(tickMap[tickName].graphList[len(tickMap[tickName].graphList) - 1].count))
+                # print("Incrementing: "+title_ticker)
 
-
-                #print("Incrementing: "+title_ticker)
 
 def writeGraphs(graph):
     name = graph.name
@@ -136,13 +112,15 @@ def main():
     reddit.read_only = True
 
     # this take in the reddit results in a longer timeframe
-    subreddits = ["Superstonk", "wallstreetbets", "stocks", "investing", "pennystocks", "robinhood", "InvestmentClub", "bitcoin", "CryptoMoonshots","cryptomarkets","options","wallstreetbetselite","wallstreetbetsnew","spacs","daytrading"]
-    symbolsF = open("../../resources/stocksymbols/stocksymbols.txt","r").readlines()
+    subreddits = ["Superstonk", "wallstreetbets", "stocks", "investing", "pennystocks", "robinhood", "InvestmentClub",
+                  "bitcoin", "CryptoMoonshots", "cryptomarkets", "options", "wallstreetbetselite", "wallstreetbetsnew",
+                  "spacs", "daytrading"]
+    symbolsF = open("../../resources/stocksymbols/stocksymbols.txt", "r").readlines()
     print(symbolsF)
-    tickMap = dict()
+
     for x in subreddits:
         subreddit = reddit.subreddit(x)
-        interpretData(subreddit, tickMap,symbolsF)
+        interpretData(subreddit, symbolsF)
 
     for graph in tickMap:
         writeGraphs(tickMap[graph])
