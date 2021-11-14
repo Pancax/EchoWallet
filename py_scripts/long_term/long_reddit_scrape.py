@@ -1,5 +1,7 @@
+import datetime
 import os
 import re
+from datetime import timezone
 from os.path import exists
 
 import praw
@@ -13,7 +15,7 @@ tickMap = dict()
 
 
 def interpretData(subreddit, symbolsF):
-    for post in subreddit.top("month", limit=5):
+    for post in subreddit.top("month", limit=2):
 
         potential_tickers = set()
 
@@ -45,6 +47,8 @@ def interpretData(subreddit, symbolsF):
         #print(post.title)
         #print(post.selftext)
         #print(potential_tickers)
+
+        #print(utc_to_local(datetime.datetime.utcfromtimestamp(post.created_utc)))
 
         for tickName in potential_tickers:
             tickName = tickName.upper()
@@ -99,13 +103,31 @@ def writeGraphs(graph):
     filename = "socialmedia_tickgraphs_long/" + name + "_graph.csv"
     f = open(filename, "w")
     graph.makeGraphGood()
+    pointGroups = []
+    list = []
+    lastStr =""
     for point in graph.graphList:
-        line = str(point.time) + "," + str(point.count) + "\n"
-        f.write(line)
 
-    f.close()
+        localTime = utc_to_local(datetime.datetime.utcfromtimestamp(point.time))
+        #go until our times dont match
+        if not localTime == lastStr:
+            if not len(list)==0:
+                pointGroups.append(list)
+            list=[]
+            list.append(point)
+            lastStr=localTime
+        list.append(point)
+    pointGroups.append(list)
+    print(str(pointGroups))
 
 
+    #line = localTime + "," + str(point.count) + "\n"
+    #f.write(line)
+
+    #f.close()
+
+def utc_to_local(utc_dt):
+    return utc_dt.replace(tzinfo=timezone.utc).astimezone(tz=None).strftime("%Y-%m-%d")
 def main():
     # reddit client instance
     reddit = praw.Reddit(client_id='icbpfsrP79uW1oxRKokBPg', client_secret='pId-cGSHUhKuRji_vYfF_cyuheSHPg',
