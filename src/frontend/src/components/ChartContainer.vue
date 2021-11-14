@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="">
     <v-chart class="chart" :option="option" />
   </div>
 </template>
@@ -43,15 +43,6 @@ export default defineComponent({
       }
 
       this.option = {
-        title: {
-          text: chart_data.chart_name,
-          textStyle: {
-            fontSize: 32,
-            color: 'white',
-            fontWeight: 'lighter',
-          },
-          left: 50,
-        },
         xAxis: {
           data: chart_data.Date,
         },
@@ -74,6 +65,5 @@ export default defineComponent({
 }
 .chart {
   height: 70vh;
-  width: 100vh;
 }
 </style>

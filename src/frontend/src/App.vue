@@ -5,8 +5,8 @@
     integrity="sha384-nNK9n28pDUDDgIiIqZ/MiyO3F4/9vsMtReZK39klb/MtkZI3/LtjSjlmyVPS3KdN"
     crossorigin="anonymous"
   />
-  <HomePage />
-  <Dashboard v-if="false" />
+  <HomePage @login_event="logIn()" v-if="!loggedIn" />
+  <Dashboard v-if="loggedIn" />
 </template>
 
 <script>
@@ -18,6 +18,16 @@ export default {
   components: {
     Dashboard,
     HomePage,
+  },
+  data() {
+    return {
+      loggedIn: false,
+    };
+  },
+  methods: {
+    logIn() {
+      this.loggedIn = true;
+    },
   },
 };
 </script>

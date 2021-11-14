@@ -1,6 +1,9 @@
 <template>
   <nav class="navbar navbar-expand-lg sticky-top seperator-btm">
     <span class="navbar-brand" href="#">EchoWallet</span>
+    <span style="position: fixed; right: 10px"
+      >This is not financial advice.</span
+    >
   </nav>
 </template>
 

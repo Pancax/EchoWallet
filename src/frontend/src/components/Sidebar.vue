@@ -1,9 +1,9 @@
 <template>
   <nav
-    class="col-md-2 d-none d-md-block sidebar seperator-right position-fixed"
+    class="col-md-2 d-none d-md-block sidebar seperator-right"
     style="min-height: 100vh"
   >
-    <div class="sidebar-sticky">
+    <div class="">
       <ul class="nav flex-column">
         <li
           class="nav-item option"
@@ -21,7 +21,7 @@
 
 <script>
 export default {
-  props: ['charts'],
+  props: ['charts', 'isPortfolio'],
   methods: {
     updateActiveChart(chartName) {
       this.$emit('new_active_chart', chartName);
