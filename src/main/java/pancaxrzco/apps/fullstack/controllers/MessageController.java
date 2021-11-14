@@ -1,14 +1,19 @@
 package pancaxrzco.apps.fullstack.controllers;
 
 
+import org.apache.commons.io.FileUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Scanner;
 
@@ -129,15 +134,25 @@ public class MessageController {
         //in namestofiles is name and png file
 
         for(String x:names.keySet()){
-
             JSONObject object = new JSONObject();
             object.put("name",x);
             object.put("r_value",names.get(x));
-            object.put("image_url",namesToFiles.get(x).getAbsolutePath());
             returnArr.put(object);
         }
-
-
         return returnArr.toString();
     }
+
+    //root path for image files
+    private String FILE_PATH_ROOT = "py_scripts/data_analyze/predictions/";
+    @GetMapping("/{filename}")
+    public ResponseEntity<byte[]> getImage(@PathVariable("filename") String filename) {
+        byte[] image = new byte[0];
+        try {
+            image = FileUtils.readFileToByteArray(new File(FILE_PATH_ROOT+filename));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return ResponseEntity.ok().contentType(MediaType.IMAGE_PNG).body(image);
+    }
+
 }
