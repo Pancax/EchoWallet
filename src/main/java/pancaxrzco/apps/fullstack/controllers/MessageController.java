@@ -53,6 +53,7 @@ public class MessageController {
                 String[] headers = lines[0].split(",");
                 //System.out.println(Arrays.toString(headers));
                 JSONArray[] headerObjs = new JSONArray[headers.length];
+                thisChart.put("chart_name",chart.getName().replace("$","").replace("_hist.csv",""));
                 for(int i=0;i<headers.length;i++){
                     headerObjs[i]=new JSONArray();
                     thisChart.put(headers[i],headerObjs[i]);
