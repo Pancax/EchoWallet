@@ -42,9 +42,9 @@ def interpretData(subreddit, symbolsF):
                 else:
                     potential_tickers.add("$" + word)
 
-        print(post.title)
-        print(post.selftext)
-        print(potential_tickers)
+        #print(post.title)
+        #print(post.selftext)
+        #print(potential_tickers)
 
         for tickName in potential_tickers:
             tickName = tickName.upper()
@@ -52,7 +52,7 @@ def interpretData(subreddit, symbolsF):
                 tickMap[tickName] = LongGraph(tickName)
             tickMap[tickName].addLongPoint(LongPoint(post.created_utc))
             tickMap[tickName].graphList[len(tickMap[tickName].graphList) - 1].addCount(100)
-            print("count after title: "+str(tickName) + ""+str(tickMap[tickName].graphList[len(tickMap[tickName].graphList) - 1].count))
+            #print("count after title: "+str(tickName) + ""+str(tickMap[tickName].graphList[len(tickMap[tickName].graphList) - 1].count))
         title_tickers = set()
         title_tickers.update(potential_tickers)
 
@@ -64,7 +64,7 @@ def interpretData(subreddit, symbolsF):
         for title_ticker in title_tickers:
             title_ticker = title_ticker.upper()
             tickMap[title_ticker].graphList[len(tickMap[title_ticker].graphList) - 1].addCount(len(top_level_comments))
-            print("count after # of coments: "+str(title_ticker) + ""+str(tickMap[title_ticker].graphList[len(tickMap[title_ticker].graphList) - 1].count))
+           #print("count after # of coments: "+str(title_ticker) + ""+str(tickMap[title_ticker].graphList[len(tickMap[title_ticker].graphList) - 1].count))
 
         for comment in top_level_comments:
             potential_tickers = set()
@@ -85,9 +85,9 @@ def interpretData(subreddit, symbolsF):
                         if tickName not in tickMap:
                             tickMap[tickName] = LongGraph(tickName)
                         tickMap[tickName].addLongPoint(LongPoint(comment.created_utc))
-                        print("Tick in comment, adding 10: " + tickName)
+                       # print("Tick in comment, adding 10: " + tickName)
                         tickMap[tickName].graphList[len(tickMap[tickName].graphList) - 1].addCount(10)
-                        print("count after comment: "+str(tickName) + ""+str(tickMap[tickName].graphList[len(tickMap[tickName].graphList) - 1].count))
+                       # print("count after comment: "+str(tickName) + ""+str(tickMap[tickName].graphList[len(tickMap[tickName].graphList) - 1].count))
                 # print("Incrementing: "+title_ticker)
 
 
@@ -98,6 +98,7 @@ def writeGraphs(graph):
         os.mkdir(dirname)
     filename = "socialmedia_tickgraphs_long/" + name + "_graph.csv"
     f = open(filename, "w")
+    graph.makeGraphGood()
     for point in graph.graphList:
         line = str(point.time) + "," + str(point.count) + "\n"
         f.write(line)

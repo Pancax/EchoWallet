@@ -49,7 +49,7 @@ public class MessageController {
                 while(sc.hasNextLine()){
                     bigString+=sc.nextLine()+"\n";
                 }
-                String[] lines = bigString.split("\n\\s+");
+                String[] lines = bigString.split("\n+");
                 String[] headers = lines[0].split(",");
                 //System.out.println(Arrays.toString(headers));
                 JSONArray[] headerObjs = new JSONArray[headers.length];
