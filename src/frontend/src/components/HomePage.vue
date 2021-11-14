@@ -29,10 +29,9 @@
         <div class="about-content col">
           <h1>What is EchoWallet?</h1>
           <span>
-            Lorem ipsum dolor sit, amet consectetur adipisicing elit. Nulla,
-            sapiente recusandae quas laudantium eos tempora veritatis excepturi
-            debitis quasi dignissimos quidem, omnis nobis? Totam laborum nisi
-            eum harum. Distinctio, ipsum!
+            EchoWallet is an automatic investment portfolio manager that
+            picks stocks based on social media trends. It uses data analysis and
+            web scraping to choose stocks, make predictions and make YOU money!
           </span>
         </div>
       </div>
@@ -47,8 +46,7 @@
           />
           <div class="card-body">
             <p class="card-text">
-              Some quick example text to build on the card title and make up the
-              bulk of the card's content.
+              Automatic Portfolio Management
             </p>
           </div>
         </div>
@@ -60,8 +58,7 @@
           />
           <div class="card-body">
             <p class="card-text">
-              Some quick example text to build on the card title and make up the
-              bulk of the card's content.
+              Statistics-backed Stock Choices
             </p>
           </div>
         </div>
@@ -73,8 +70,7 @@
           />
           <div class="card-body">
             <p class="card-text">
-              Some quick example text to build on the card title and make up the
-              bulk of the card's content.
+              Security In Numbers
             </p>
           </div>
         </div>
