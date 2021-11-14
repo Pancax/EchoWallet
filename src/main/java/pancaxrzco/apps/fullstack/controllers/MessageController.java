@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Scanner;
 
 
@@ -38,7 +38,7 @@ public class MessageController {
     @GetMapping("/getStockCharts")
     public String getStockCharts(){
         JSONArray arr = new JSONArray();
-        File f = new File("py_scripts/stockhist");
+        File f = new File("py_scripts/data_analyze/finalgraphs/");
 
         File[] kids = f.listFiles();
         for(File chart: kids){
@@ -73,5 +73,71 @@ public class MessageController {
             arr.put(thisChart);
         }
         return arr.toString();
+    }
+
+    @GetMapping("/getPredictions")
+    public String getPredictions(){
+        JSONArray returnArr = new JSONArray();
+
+        File f = new File("py_scripts/data_analyze/predictions/");
+        File[] files = f.listFiles();
+
+        File importantFile=null;
+        for(File x: files){
+            if(x.getName().contains(".txt")){
+                importantFile=x;
+                break;
+            }
+
+        }
+
+        HashMap<String,String> names = new HashMap<>();
+        HashMap<String,File> namesToFiles = new HashMap<String, File>();
+        try {
+
+            Scanner sc = new Scanner(importantFile);
+            String bigString="";
+            while(sc.hasNextLine()){
+                bigString+=sc.nextLine()+"\n";
+            }
+
+            String[] lines = bigString.split("\n");
+            for(String line:lines){
+                String[] splitter = line.split(",");
+                String[] splitAgain = splitter[1].split(": ");
+
+                names.put(splitter[0],splitAgain[1]);
+            }
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        for(String x: names.keySet()){
+            for(File file: files){
+
+                if(file.getName().equals(x+".png")){
+                    System.out.println("equals");
+                    namesToFiles.put(x,file);
+                }
+            }
+        }
+
+
+
+        //in names is name and r value
+        //in namestofiles is name and png file
+
+        for(String x:names.keySet()){
+
+            JSONObject object = new JSONObject();
+            object.put("name",x);
+            object.put("r_value",names.get(x));
+            object.put("image_url",namesToFiles.get(x).getAbsolutePath());
+            returnArr.put(object);
+        }
+
+
+        return returnArr.toString();
     }
 }
